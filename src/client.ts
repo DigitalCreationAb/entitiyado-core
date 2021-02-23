@@ -8,7 +8,7 @@ export class Client {
         this._settings = settings;
     }
 
-    getActor(type: string, id: string): ActorRef {
-        return new ActorRef(type, id, undefined, this._settings.communication);
+    getActor(identifier: string): ActorRef | undefined {
+        return ActorRef.parse(identifier, this._settings.communication);
     }
 }
