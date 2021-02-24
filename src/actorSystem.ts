@@ -1,8 +1,8 @@
+import {Actor} from "./actor";
+import {ActorRef} from "./actorRef";
 import {Persistence} from "./persistence";
 import {ActorCommunicationProtocol} from "./actorCommunicationProtocol";
-import {ActorRef} from "./actorRef";
 import {Command} from "./command";
-import {Actor} from "./actor";
 import {Event} from "./event";
 
 export class ActorSystem {

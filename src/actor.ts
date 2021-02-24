@@ -1,9 +1,15 @@
-import {RecoveryHandlers} from "./recoveryHandlers";
-import {CommandHandlers} from "./commandHandlers";
-import {ActorContext} from "./actorContext";
-import {Event} from "./event";
-import {Command} from "./command";
 import {ActorRef} from "./actorRef";
+import {ActorContext} from "./actorContext";
+import {Command} from "./command";
+import {Event} from "./event";
+
+interface CommandHandlers<TState> {
+    [key: string]: (command: any, context: ActorContext<TState>) => Promise<void> | void
+}
+
+interface RecoveryHandlers<TState> {
+    [key: string]: (state: TState, event: any) => TState;
+}
 
 export abstract class Actor<TState> {
     private readonly _recoveryHandlers: RecoveryHandlers<TState> = {};
@@ -48,7 +54,7 @@ export abstract class Actor<TState> {
         if (!this._commandHandlers[command.type]) {
             return [];
         }
-        
+
         const context = {
             state: this._currentState,
             sender: command.sender
