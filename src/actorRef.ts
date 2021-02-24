@@ -1,27 +1,31 @@
 import {ActorCommunicationProtocol} from "./actorCommunicationProtocol";
+import {Message} from "./message";
 
 export class ActorRef {
     private _communicationProtocol: ActorCommunicationProtocol;
 
     constructor(
         id: string,
+        type: string,
         parent: ActorRef | undefined,
         communicationProtocol: ActorCommunicationProtocol) {
         this.id = id;
+        this.type = type;
         this.parent = parent;
         this._communicationProtocol = communicationProtocol;
     }
 
     id: string;
+    type: string;
     parent: ActorRef | undefined;
 
-    tell(message: any): Promise<void> {
-        return this._communicationProtocol.send(this.toString(), message);
+    tell(message: Message, sender: ActorRef): Promise<void> {
+        return this._communicationProtocol.send(this, message, sender);
     }
 
     toString(): string {
         if (this.parent) {
-            return `${this.parent.toString()}/${this.id}`;
+            return `${this.parent.toString()}/${this.id}@${this.type}`;
         }
 
         return this.id;
@@ -33,7 +37,8 @@ export class ActorRef {
         let actor: ActorRef | undefined = undefined;
 
         for (const item of hierarchy) {
-            actor = new ActorRef(item, actor, communication);
+            const parts = item.split('@');
+            actor = new ActorRef(parts[0], parts[1], actor, communication);
         }
 
         return actor;

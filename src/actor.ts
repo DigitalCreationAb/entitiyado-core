@@ -3,18 +3,22 @@ import {CommandHandlers} from "./commandHandlers";
 import {ActorContext} from "./actorContext";
 import {Event} from "./event";
 import {Command} from "./command";
+import {ActorRef} from "./actorRef";
 
 export abstract class Actor<TState> {
-    private _recoveryHandlers: RecoveryHandlers<TState> = {};
-    private _commandHandlers: CommandHandlers<TState> = {};
+    private readonly _recoveryHandlers: RecoveryHandlers<TState> = {};
+    private readonly _commandHandlers: CommandHandlers<TState> = {};
+    private readonly _pendingEvents: Event[] = [];
+    private _currentState: TState;
 
-    protected constructor() {
-        this.init();
+    protected constructor(self: ActorRef) {
+        this.self = self;
+        this._currentState = this.getInitialState();
     }
 
-    abstract init(): void;
+    protected self: ActorRef;
 
-    abstract getInitialState(): TState;
+    protected abstract getInitialState(): TState;
 
     protected recover(type: string, handler: (state: TState, event: any) => TState) {
         this._recoveryHandlers[type] = handler;
@@ -24,19 +28,36 @@ export abstract class Actor<TState> {
         this._commandHandlers[type] = handler;
     }
 
-    applyEvents(state: TState, events: Event[]): TState {
+    protected persist(type: string, body: any): void {
+        this._pendingEvents.push(new Event(type, body));
+    }
+
+    public applyEvents(events: Event[]): void {
+        let state = this._currentState;
+
         for (const event of events) {
             if (this._recoveryHandlers[event.type]) {
                 state = this._recoveryHandlers[event.type](state, event.body);
             }
         }
 
-        return state;
+        this._currentState = state;
     }
 
-    handleCommand(command: Command, context: ActorContext<TState>): Promise<void> | void {
-        if (this._commandHandlers[command.type]) {
-            return this._commandHandlers[command.type](command, context);
+    public async handleCommand(command: Command): Promise<Event[]> {
+        if (!this._commandHandlers[command.type]) {
+            return [];
         }
+        
+        const context = {
+            state: this._currentState,
+            sender: command.sender
+        } as ActorContext<TState>;
+
+        await this._commandHandlers[command.type](command.body, context);
+
+        this.applyEvents(this._pendingEvents);
+
+        return this._pendingEvents.slice(0, this._pendingEvents.length);
     }
 }
