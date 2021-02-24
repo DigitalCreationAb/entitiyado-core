@@ -1,6 +1,6 @@
 {
     "name": "@digitalcreation/aws-lambda-actors",
-    "version": "0.10.0",
+    "version": "0.11.0",
     "license": "MIT",
     "devDependencies": {
         "rimraf": "^3.0.2",
