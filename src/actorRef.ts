@@ -1,5 +1,5 @@
 import {ActorCommunicationProtocol} from "./actorCommunicationProtocol";
-import {Message} from "./message";
+import {Command} from "./command";
 
 export class ActorRef {
     private _communicationProtocol: ActorCommunicationProtocol;
@@ -19,8 +19,8 @@ export class ActorRef {
     type: string;
     parent: ActorRef | undefined;
 
-    tell(message: Message, sender: ActorRef): Promise<void> {
-        return this._communicationProtocol.send(this, message, sender);
+    tell(type: string, body: any, sender: ActorRef): Promise<void> {
+        return this._communicationProtocol.send(this, new Command(type, body, sender));
     }
 
     toString(): string {
