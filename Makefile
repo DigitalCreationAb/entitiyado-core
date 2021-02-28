@@ -27,7 +27,7 @@ build: clean restore
 	yarn build
 
 .PHONY: test
-test: : build
+test:
 	yarn test
 
 .PHONY: clean
