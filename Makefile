@@ -20,7 +20,7 @@ NPM_ACCESS_TOKEN ?=
 
 .PHONY: restore
 restore:
-	export NODE_ENV=development && yarn
+	yarn
 
 .PHONY: build
 build: clean

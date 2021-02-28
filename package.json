@@ -14,6 +14,7 @@
         "index.d.ts"
     ],
     "scripts": {
+        "rimraf": "./node_modules/rimraf/bin.js",
         "build": "tsc && rollup -c",
         "clean": "rimraf dist && rimraf node_modules && rimraf index.js && rimraf index.d.ts"
     }
