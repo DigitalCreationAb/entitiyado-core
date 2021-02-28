@@ -20,10 +20,10 @@ NPM_ACCESS_TOKEN ?=
 
 .PHONY: restore
 restore:
-	export NODE_ENV=development && yarn
+	yarn
 
 .PHONY: build
-build: clean
+build: clean restore
 	yarn build
 
 .PHONY: test
@@ -31,8 +31,8 @@ test: restore
 	yarn test
 
 .PHONY: clean
-clean: restore
-	yarn clean
+clean:
+	rm -rf ./node_modules ./dist ./index.js ./index.d.ts
 
 .PHONY: publish
 publish: build
