@@ -23,15 +23,15 @@ restore:
 	yarn
 
 .PHONY: build
-build: clean restore
+build: clean
 	yarn build
 
 .PHONY: test
-test:
+test: restore
 	yarn test
 
 .PHONY: clean
-clean:
+clean: restore
 	yarn clean
 
 .PHONY: publish
