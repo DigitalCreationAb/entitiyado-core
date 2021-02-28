@@ -1,0 +1,12 @@
+name: Publish package
+
+on:
+    pull_request
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v1
+            - name: Publish
+              run: make publish NPM_ACCESS_TOKEN=${{ NPM_ACCESS_TOKEN }}
