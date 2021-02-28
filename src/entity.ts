@@ -1,28 +1,28 @@
-import {ActorRef} from "./actorRef";
-import {ActorContext} from "./actorContext";
+import {EntityRef} from "./entityRef";
+import {EntityContext} from "./entityContext";
 import {Command} from "./command";
 import {Event} from "./event";
 
 interface CommandHandlers<TState> {
-    [key: string]: (command: any, context: ActorContext<TState>) => Promise<void> | void
+    [key: string]: (command: any, context: EntityContext<TState>) => Promise<void> | void
 }
 
 interface RecoveryHandlers<TState> {
     [key: string]: (state: TState, event: any) => TState;
 }
 
-export abstract class Actor<TState> {
+export abstract class Entity<TState> {
     private readonly _recoveryHandlers: RecoveryHandlers<TState> = {};
     private readonly _commandHandlers: CommandHandlers<TState> = {};
     private readonly _pendingEvents: Event[] = [];
     private _currentState: TState;
 
-    protected constructor(self: ActorRef) {
+    protected constructor(self: EntityRef) {
         this.self = self;
         this._currentState = this.getInitialState();
     }
 
-    protected self: ActorRef;
+    protected self: EntityRef;
 
     protected abstract getInitialState(): TState;
 
@@ -30,7 +30,7 @@ export abstract class Actor<TState> {
         this._recoveryHandlers[type] = handler;
     }
 
-    protected command(type: string, handler: (command: any, context: ActorContext<TState>) => Promise<void> | void) {
+    protected command(type: string, handler: (command: any, context: EntityContext<TState>) => Promise<void> | void) {
         this._commandHandlers[type] = handler;
     }
 
@@ -58,7 +58,7 @@ export abstract class Actor<TState> {
         const context = {
             state: this._currentState,
             sender: command.sender
-        } as ActorContext<TState>;
+        } as EntityContext<TState>;
 
         await this._commandHandlers[command.type](command.body, context);
 

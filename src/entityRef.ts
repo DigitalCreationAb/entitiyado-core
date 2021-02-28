@@ -1,14 +1,14 @@
-import {ActorCommunicationProtocol} from "./actorCommunicationProtocol";
+import {CommunicationProtocol} from "./communicationProtocol";
 import {Command} from "./command";
 
-export class ActorRef {
-    private _communicationProtocol: ActorCommunicationProtocol;
+export class EntityRef {
+    private _communicationProtocol: CommunicationProtocol;
 
     constructor(
         id: string,
         type: string,
-        parent: ActorRef | undefined,
-        communicationProtocol: ActorCommunicationProtocol) {
+        parent: EntityRef | undefined,
+        communicationProtocol: CommunicationProtocol) {
         this.id = id;
         this.type = type;
         this.parent = parent;
@@ -17,9 +17,9 @@ export class ActorRef {
 
     id: string;
     type: string;
-    parent: ActorRef | undefined;
+    parent: EntityRef | undefined;
 
-    tell(type: string, body: any, sender: ActorRef): Promise<void> {
+    tell(type: string, body: any, sender: EntityRef): Promise<void> {
         return this._communicationProtocol.send(this, new Command(type, body, sender));
     }
 
@@ -31,16 +31,16 @@ export class ActorRef {
         return this.id;
     }
 
-    static parse(identifier: string, communication: ActorCommunicationProtocol): ActorRef | undefined {
+    static parse(identifier: string, communication: CommunicationProtocol): EntityRef | undefined {
         const hierarchy = identifier.split('/');
 
-        let actor: ActorRef | undefined = undefined;
+        let ref: EntityRef | undefined = undefined;
 
         for (const item of hierarchy) {
             const parts = item.split('@');
-            actor = new ActorRef(parts[0], parts[1], actor, communication);
+            ref = new EntityRef(parts[0], parts[1], ref, communication);
         }
 
-        return actor;
+        return ref;
     }
 }

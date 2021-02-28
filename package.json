@@ -1,6 +1,6 @@
 {
-    "name": "@digitalcreation/aws-lambda-actors",
-    "version": "0.13.0",
+    "name": "@entitiyado/core",
+    "version": "0.14.0",
     "license": "MIT",
     "devDependencies": {
         "rimraf": "^3.0.2",
@@ -15,7 +15,7 @@
     ],
     "scripts": {
         "build": "yarn run clean && tsc && rollup -c",
-        "push": "yarn run build && npm publish . --scope digitalcreation",
+        "push": "yarn run build && npm publish . --scope entitiyado",
         "clean": "rimraf dist && rimraf build && rimraf index.js && rimraf index.d.ts"
     }
 }

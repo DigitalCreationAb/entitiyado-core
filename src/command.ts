@@ -1,7 +1,7 @@
-import {ActorRef} from "./actorRef";
+import {EntityRef} from "./entityRef";
 
 export class Command {
-    constructor(type: string, body: any, sender: ActorRef | undefined) {
+    constructor(type: string, body: any, sender: EntityRef | undefined) {
         this.type = type;
         this.body = body;
         this.sender = sender;
@@ -9,5 +9,5 @@ export class Command {
 
     type: string;
     body: any;
-    sender: ActorRef | undefined;
+    sender: EntityRef | undefined;
 }
